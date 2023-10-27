@@ -1,20 +1,24 @@
 ﻿
 
+using System.Text;
+
 namespace Entidades
 {
     public class Obra
     {
-        private Propietario propietario;
+        private string nombrePropietario;
+        private int dni;
         private string codInterno;
         private string tipo;
-        int dias;
+        private int dias;
         private double estado;
         private JefeDeObra jefeDeObra;
         private double costo;
 
-        public Obra(Propietario propietario, string codInterno, string tipo, int dias, JefeDeObra obrero, double costo)
+        public Obra(string nombrePropietario,int dni, string codInterno, string tipo, int dias, JefeDeObra obrero, double costo)
         {   
-            this.propietario = propietario;
+            this.nombrePropietario = nombrePropietario;
+            this.dni = dni;
             this.codInterno = codInterno;
             this.tipo = tipo;
             this.dias = dias;
@@ -22,8 +26,7 @@ namespace Entidades
             this.JefeDeObra = obrero;
             this.costo = costo;
         }
-
-
+        
         public string CodInterno
         {
             get { return this.codInterno; }
@@ -53,11 +56,22 @@ namespace Entidades
             get { return this.costo; }
             set { this.costo = value; }
         }
-
         public JefeDeObra JefeDeObra 
         {
             get { return this.jefeDeObra; }
             set { this.jefeDeObra = value; }
+        }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"Codigo Interno: {this.CodInterno}");
+            sb.AppendLine($"Tipo: {this.Tipo}");
+            sb.AppendLine($"Dias: {this.Dias}");
+            sb.AppendLine($"Estado: {this.Estado}%");
+            sb.AppendLine($"Costo: {this.Costo}");
+            sb.AppendLine(JefeDeObra.ToString());
+            return sb.ToString();
         }
     }
 }

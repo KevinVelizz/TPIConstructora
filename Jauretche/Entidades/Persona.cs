@@ -25,7 +25,7 @@ namespace Entidades
             StringBuilder mensaje = new StringBuilder();
             mensaje.AppendLine($"Nombre: {this.nombre}");
             mensaje.AppendLine($"Apellido: {this.apellido}");
-            mensaje.AppendLine($"DNI: {this.dni}");
+            mensaje.Append($"DNI: {this.dni}");
             return mensaje.ToString();
         }
     }

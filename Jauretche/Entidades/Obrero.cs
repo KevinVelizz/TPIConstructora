@@ -9,6 +9,7 @@ namespace Entidades
         double sueldo;
         string cargo;
 
+
         public Obrero(string nombre, string apellido ,int dni,int nroLegajo, double sueldo, string cargo) : base(nombre, apellido, dni)
         {
             this.nroLegajo = nroLegajo;

@@ -4,22 +4,21 @@ namespace Entidades
 {
     public class Grupo
     {
-        private double codigoObra;
+        private string codigoObra;
         private List<Obrero> obreros;
 
         private Grupo()
         {
             this.obreros = new List<Obrero>();
-            this.codigoObra = 0;
+            this.codigoObra = "0";
         }
 
-        public Grupo(double codigoObre, List<Obrero> obreros) : this()
+        public Grupo(string codigoObra) : this()
         {
-            this.codigoObra = codigoObre;
-            this.obreros = obreros;
+            this.codigoObra = codigoObra;
         }
         
-        public double CodigoObra
+        public string CodigoObra
         {
             get { return this.codigoObra; }
             set { this.codigoObra = value; }
@@ -50,7 +49,6 @@ namespace Entidades
                     break;
                 }
             }
-
             return retorno;
         }
     }

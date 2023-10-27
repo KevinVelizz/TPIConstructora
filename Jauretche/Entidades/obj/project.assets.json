@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Mellis\\Desktop\\jauretche\\Jauretche\\Entidades\\Entidades.csproj",
+      "projectUniqueName": "C:\\Users\\Mellis\\Desktop\\TPIConstructora\\Jauretche\\Entidades\\Entidades.csproj",
       "projectName": "Entidades",
-      "projectPath": "C:\\Users\\Mellis\\Desktop\\jauretche\\Jauretche\\Entidades\\Entidades.csproj",
+      "projectPath": "C:\\Users\\Mellis\\Desktop\\TPIConstructora\\Jauretche\\Entidades\\Entidades.csproj",
       "packagesPath": "C:\\Users\\Mellis\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Mellis\\Desktop\\jauretche\\Jauretche\\Entidades\\obj\\",
+      "outputPath": "C:\\Users\\Mellis\\Desktop\\TPIConstructora\\Jauretche\\Entidades\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Mellis\\AppData\\Roaming\\NuGet\\NuGet.Config",
