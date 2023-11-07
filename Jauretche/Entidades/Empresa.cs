@@ -29,33 +29,14 @@ namespace Entidades
 
         public bool ContratarObrero(Obrero obrero)
         {
-            Grupo grupo = ObtenerGrupoDisponible();
+            Grupo grupo = ObtenerGrupoDisponible(obrero);
             bool retorno = false;
 
             if (grupo != null)
             {
-                if (this.Obreros.Count > 0)
-                {
-                    foreach (Obrero obreroLista in this.Obreros)
-                    {
-                        retorno = false;
-                        if (obreroLista != obrero)
-                        {
-                            retorno = true;
-                        }
-                    }
-                    if (retorno)
-                    {
-                        grupo.agregarObreroGrupo(obrero);
-                        Obreros.Add(obrero);
-                    }
-                }
-                else
-                {
-                    grupo.Obreros.Add(obrero);
-                    Obreros.Add(obrero);
-                    retorno = true;
-                }
+                grupo.Obreros.Add(obrero);
+                Obreros.Add(obrero);
+                retorno = true;
             }
             return retorno;
         }
@@ -80,11 +61,25 @@ namespace Entidades
             return false;
         }
 
-        private Grupo ObtenerGrupoDisponible()
+        private Grupo ObtenerGrupoDisponible(Obrero obrero)
         {
             foreach (Grupo grupo in this.gruposDeObreros)
             {
-                if (grupo.Obreros.Count < 8)
+                if(grupo.Obreros.Count > 0)
+                {
+                    foreach (Obrero obreroEmpresa in grupo.Obreros)
+                    {
+                        if (obreroEmpresa == obrero)
+                        {
+                            return null;
+                        }
+                        else if (grupo.Obreros.Count < 3 && !grupo.Obreros.OfType<JefeDeObra>().Any())
+                        {
+                            return grupo;
+                        }
+                    }
+                }
+                else
                 {
                     return grupo;
                 }
@@ -117,9 +112,13 @@ namespace Entidades
         public string ListarObrasEjecucionAvanceMasMitad()
         {
             StringBuilder mensaje = new StringBuilder();
+            mensaje.AppendLine("--Obras en procesos mas del 50%--");
             foreach(Obra obra in this.ObrasEnProceso)
             {
-                mensaje.AppendLine(obra.ToString());
+                if(obra.Estado > 50)
+                {
+                    mensaje.AppendLine(obra.ToString());
+                }
             }
             return mensaje.ToString();
         }
@@ -129,7 +128,8 @@ namespace Entidades
             StringBuilder mensaje = new StringBuilder();
             if (this.ObrasFinalizadas.Count > 0)
             {
-                foreach (Obra obra in this.ObrasEnProceso)
+                mensaje.AppendLine("-- Obras finalizadas --");
+                foreach (Obra obra in this.ObrasFinalizadas)
                 {
                     mensaje.AppendLine(obra.ToString());
                 }
@@ -144,26 +144,14 @@ namespace Entidades
         public string ListarJefesDeObras()
         {
             StringBuilder mensaje = new StringBuilder();
-            if (this.ObrasEnProceso.Count > 0 && this.ObrasFinalizadas.Count > 0)
-            {
-                mensaje.AppendLine("No hay jefes de obras porque no hay obras.");
-            }
-            else
-            {
-                if (this.ObrasEnProceso.Count > 0)
-                {
-                    foreach (Obra obra in this.ObrasEnProceso)
-                    {
-                        mensaje.AppendLine(obra.JefeDeObra.ToString());
-                    }
-                }
+            int contador = 1;
 
-                if (this.ObrasFinalizadas.Count > 0)
+            foreach(Obrero obrero in this.obreros)
+            {
+                if(obrero is JefeDeObra)
                 {
-                    foreach (Obra obra1 in this.ObrasFinalizadas)
-                    {
-                        mensaje.AppendLine(obra1.JefeDeObra.ToString());
-                    }
+                    mensaje.Append(contador.ToString() + ": ");
+                    mensaje.AppendLine(obrero.ToString());
                 }
             }
             return mensaje.ToString();
@@ -182,7 +170,9 @@ namespace Entidades
                             if(obra.CodInterno == grupo.CodigoObra)
                             {
                                 grupo.CodigoObra = "0";
+                                grupo.eliminarObreroGrupo(jefeDeObra);
                                 this.obrasEnProceso.Remove(obra);
+                                this.obreros.Remove(jefeDeObra);
                                 return true;
                             }
                         }
@@ -190,6 +180,19 @@ namespace Entidades
                 }
             }
             return false;
+        }
+
+        public bool EliminarObraTerminada(double estado, Obra obra)
+        {
+            bool retorno = false;
+            obra.ModificarEstado(estado);
+            if(obra.Estado == 100)
+            {
+                this.obrasEnProceso.Remove(obra);
+                this.obrasFinalizadas.Add(obra);
+                retorno = true;
+            }
+            return retorno;
         }
     }
 }

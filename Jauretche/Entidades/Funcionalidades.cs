@@ -48,7 +48,6 @@ namespace Entidades
                 Console.WriteLine("Error al agregar el obrero.");
             }
         }
-
         public static void BorrarObrero()
         {
             Console.WriteLine("Ingrese el numero de legajo: ");
@@ -75,6 +74,161 @@ namespace Entidades
             else
             {
                 Console.WriteLine("No se eliminó correctamente. Verificar legajo.");
+            }
+        }
+        
+        public static void AgregarUnaObra()
+        {
+            try
+            {
+                Console.WriteLine("--Crear un Jefe De Obra--");
+                Console.WriteLine("Ingresar nombre: ");
+                string nombre = Console.ReadLine();
+                Console.WriteLine("Ingresar apellido: ");
+                string apellido = Console.ReadLine();
+                Console.WriteLine("Ingresar dni: ");
+                int dni;
+
+                do
+                {
+                    Console.Write("Por favor, ingrese valores numéricos: ");
+                } while (!int.TryParse(Console.ReadLine(), out dni));
+
+                Console.WriteLine("Ingresar nroLegajo: ");
+                int nroLegajo;
+                do
+                {
+                    Console.Write("Por favor, ingrese valores numéricos: ");
+                } while (!int.TryParse(Console.ReadLine(), out nroLegajo));
+
+                Console.WriteLine("Ingresar sueldo: ");
+                double sueldo;
+                do
+                {
+                    Console.Write("Por favor, ingrese valores numéricos: ");
+                } while (!double.TryParse(Console.ReadLine(), out sueldo));
+
+                Console.WriteLine("Ingresar bonificación: ");
+                double bonificacion;
+                do
+                {
+                    Console.Write("Por favor, ingrese valores numéricos: ");
+                } while (!double.TryParse(Console.ReadLine(), out bonificacion));
+
+                JefeDeObra obrero = new JefeDeObra(nombre, apellido, dni, nroLegajo, sueldo, "Jefe de obra",bonificacion);
+
+                if(empresa.ContratarObrero(obrero))
+                {
+                    Console.WriteLine("Agregado correctamente al grupo y a la empresa.");
+                }
+                else
+                {
+                    throw new NoHayGrupoLibreException("No hay grupos disponibles o el obrero ya está en la empresa.");
+                }
+                Console.WriteLine("--Crear Obra--");
+                Console.WriteLine("Ingrese nombre del propietario: ");
+                string nombrePropietario = Console.ReadLine();
+                Console.WriteLine("Ingrese dni del propietario: ");
+                int dniPropietario;
+                do
+                {
+                    Console.Write("Por favor, ingrese valores numéricos: ");
+                } while (!int.TryParse(Console.ReadLine(), out dniPropietario));
+
+                Console.WriteLine("Ingrese el codigo interno: ");
+                string codInterno = Console.ReadLine();
+
+                Console.WriteLine("Ingrese el tipo: ");
+                string tipo = Console.ReadLine();
+
+                Console.WriteLine("Ingrese dias: ");
+                int dias;
+                do
+                {
+                    Console.Write("Por favor, ingrese valores numéricos: ");
+                } while (!int.TryParse(Console.ReadLine(), out dias));
+
+                Console.WriteLine("Ingrese costo: ");
+                double costo;
+                do
+                {
+                    Console.Write("Por favor, ingrese valores numéricos: ");
+                } while (!double.TryParse(Console.ReadLine(), out costo));
+
+                Obra obra = new Obra(nombrePropietario, dniPropietario, codInterno, tipo, dias, costo);
+                obra.AsignarJefeDeObra(obrero);
+                empresa.AgregarObra(obra);
+                foreach(Grupo grupoEmpresa in empresa.GruposDeObreros)
+                {
+                    if(grupoEmpresa.Obreros.Contains(obrero))
+                    {
+                        grupoEmpresa.CodigoObra = obra.CodInterno;
+                    }
+                }
+            }
+            catch (NoHayGrupoLibreException ex)
+            {
+                Console.WriteLine("Mensaje: " + ex.Message);
+            }
+        }
+
+        public static void ModificarEstadoObra()
+        {
+
+            Console.WriteLine("-- Elegir obra a modificar estado --");
+
+            int contador = 1;
+
+            foreach(Obra obraProceso in empresa.ObrasEnProceso)
+            {
+                Console.WriteLine(contador.ToString() + ":");
+                Console.WriteLine(obraProceso.ToString());
+                contador++;
+            }
+
+            int obraSeleccionada;
+            do
+            {
+                Console.Write("Por favor, ingrese un valor numérico y dentro del rango permitido: ");
+            } while (!int.TryParse(Console.ReadLine(), out obraSeleccionada) || obraSeleccionada <= 0 || obraSeleccionada > empresa.ObrasEnProceso.Count);
+            obraSeleccionada = obraSeleccionada - 1;
+            Obra obra = empresa.ObrasEnProceso[obraSeleccionada];
+
+            Console.WriteLine("-- Ingrese el estado de avance --");
+            double estado;
+            do
+            {
+                Console.Write("Por favor, ingrese valores numéricos y un estado menor o igual a 100: ");
+            } while (!double.TryParse(Console.ReadLine(), out estado) && estado <= 100);
+            empresa.EliminarObraTerminada(estado, obra);
+        }
+
+        public static void EliminarJefeDeObra()
+        {
+            Console.WriteLine(empresa.ListarJefesDeObras());
+            List<JefeDeObra> jefesDeObras = new List<JefeDeObra>();
+            int jefeDeObraSeleccionado;
+            Console.WriteLine("-- Seleccione el jefe de obra a eliminar --");
+            do
+            {
+                Console.Write("Por favor, ingrese un valor numérico y dentro del rango permitido: ");
+            } while (!int.TryParse(Console.ReadLine(), out jefeDeObraSeleccionado) || jefeDeObraSeleccionado <= 0 || jefeDeObraSeleccionado > empresa.ObrasEnProceso.Count);
+
+            foreach(Obrero obreroEmpresa in empresa.Obreros)
+            {
+                if(obreroEmpresa is JefeDeObra)
+                {
+                    jefesDeObras.Add((JefeDeObra)obreroEmpresa);
+                }
+            }
+            JefeDeObra jefeDeObra = jefesDeObras[jefeDeObraSeleccionado];
+            if(empresa.EliminarJefeDeObra(jefeDeObra))
+            {
+                Console.WriteLine("Eliminado correctamente el jefe de obra.");
+            }
+            else
+            {
+                Console.WriteLine("No se pudo eliminar el jefe de obra.");
             }
         }
     }

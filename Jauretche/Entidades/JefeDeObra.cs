@@ -13,6 +13,11 @@ namespace Entidades
             this.bonificacion = bonificacion;
         }
 
+        public double Bonificacion
+        {
+            get { return bonificacion; }
+        }
+
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
