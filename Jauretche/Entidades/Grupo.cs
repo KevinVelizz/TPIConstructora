@@ -31,6 +31,8 @@ namespace Entidades
             set { this.obreros = value; }
         }
 
+      
+
         public void agregarObreroGrupo(Obrero obrero)
         {
             this.obreros.Add(obrero);

@@ -41,42 +41,58 @@ namespace Entidades
             Obrero obrero = new Obrero(nombre, apellido, dni, nroLegajo, sueldo, cargo);
             if(empresa.ContratarObrero(obrero))
             {
+                Console.WriteLine("------------------------------");
                 Console.WriteLine("Obrero agregado correctamente.");
+                Console.WriteLine("------------------------------");
             }
             else
             {
-                Console.WriteLine("Error al agregar el obrero.");
+                Console.WriteLine("-----------------------------------------------------");
+                Console.WriteLine("Error al agregar el obrero. Ya existe o no hay grupo.");
+                Console.WriteLine("-----------------------------------------------------");
             }
         }
         public static void BorrarObrero()
         {
-            Console.WriteLine("Ingrese el numero de legajo: ");
-            int nroLegajo;
-            do
+            if(empresa.Obreros.Count > 0)
             {
-                Console.Write("Por favor, ingrese valores numéricos: ");
-            } while (!int.TryParse(Console.ReadLine(), out nroLegajo));
-            Obrero obrero1 = new Obrero("kevin", "veliz", 43898582, 24, 24000, "albañil");
-
-            foreach (Obrero obrero in empresa.Obreros)
-            {
-                if (obrero.NroLegajo == nroLegajo)
+                Console.WriteLine("Ingrese el numero de legajo: ");
+                int nroLegajo;
+                do
                 {
-                    obrero1 = obrero;
-                    break;
+                    Console.Write("Por favor, ingrese valores numéricos: ");
+                } while (!int.TryParse(Console.ReadLine(), out nroLegajo));
+                Obrero obrero1 = new Obrero("kevin", "veliz", 43898582, 24, 24000, "albañil");
+
+                foreach (Obrero obrero in empresa.Obreros)
+                {
+                    if (obrero.NroLegajo == nroLegajo)
+                    {
+                        obrero1 = obrero;
+                        break;
+                    }
+                }
+
+                if (empresa.EliminarObrero(obrero1))
+                {
+                    Console.WriteLine("--------------------------");
+                    Console.WriteLine("Se eliminó correctamente.");
+                    Console.WriteLine("--------------------------");
+                }
+                else
+                {
+                    Console.WriteLine("----------------------------------------------");
+                    Console.WriteLine("No se eliminó correctamente. Verificar legajo.");
+                    Console.WriteLine("----------------------------------------------");
                 }
             }
-           
-            if(empresa.EliminarObrero(obrero1))
-            {
-                Console.WriteLine("Se eliminó correctamente.");
-            }    
             else
             {
-                Console.WriteLine("No se eliminó correctamente. Verificar legajo.");
+                Console.WriteLine("------------------------------");
+                Console.WriteLine("No hay obreros en la empresa.");
+                Console.WriteLine("------------------------------");
             }
         }
-        
         public static void AgregarUnaObra()
         {
             try
@@ -165,6 +181,7 @@ namespace Entidades
                         grupoEmpresa.CodigoObra = obra.CodInterno;
                     }
                 }
+                Console.WriteLine("Agregador correctamente.");
             }
             catch (NoHayGrupoLibreException ex)
             {
@@ -175,32 +192,46 @@ namespace Entidades
         public static void ModificarEstadoObra()
         {
 
-            Console.WriteLine("-- Elegir obra a modificar estado --");
 
-            int contador = 1;
-
-            foreach(Obra obraProceso in empresa.ObrasEnProceso)
+            if(empresa.ObrasEnProceso.Count > 0)
             {
-                Console.WriteLine(contador.ToString() + ":");
-                Console.WriteLine(obraProceso.ToString());
-                contador++;
+                Console.WriteLine("------------------------------");
+                Console.WriteLine("Elegir obra a modificar estado");
+                Console.WriteLine("------------------------------");
+
+                int contador = 1;
+
+                foreach (Obra obraProceso in empresa.ObrasEnProceso)
+                {
+                    Console.WriteLine(contador.ToString() + ":");
+                    Console.WriteLine(obraProceso.ToString());
+                    contador++;
+                }
+
+                int obraSeleccionada;
+                do
+                {
+                    Console.Write("Por favor, ingrese un valor numérico y dentro del rango permitido: ");
+                } while (!int.TryParse(Console.ReadLine(), out obraSeleccionada) || obraSeleccionada <= 0 || obraSeleccionada > empresa.ObrasEnProceso.Count);
+                obraSeleccionada = obraSeleccionada - 1;
+                Obra obra = empresa.ObrasEnProceso[obraSeleccionada];
+
+                Console.WriteLine("-- Ingrese el estado de avance --");
+                double estado;
+                do
+                {
+                    Console.Write("Por favor, ingrese valores numéricos y un estado menor o igual a 100: ");
+                } while (!double.TryParse(Console.ReadLine(), out estado) && estado <= 100);
+                empresa.EliminarObraTerminada(estado, obra);
+            }
+            else
+            {
+                Console.WriteLine("------------------------");
+                Console.WriteLine("No hay obras en proceso.");
+                Console.WriteLine("------------------------");
+
             }
 
-            int obraSeleccionada;
-            do
-            {
-                Console.Write("Por favor, ingrese un valor numérico y dentro del rango permitido: ");
-            } while (!int.TryParse(Console.ReadLine(), out obraSeleccionada) || obraSeleccionada <= 0 || obraSeleccionada > empresa.ObrasEnProceso.Count);
-            obraSeleccionada = obraSeleccionada - 1;
-            Obra obra = empresa.ObrasEnProceso[obraSeleccionada];
-
-            Console.WriteLine("-- Ingrese el estado de avance --");
-            double estado;
-            do
-            {
-                Console.Write("Por favor, ingrese valores numéricos y un estado menor o igual a 100: ");
-            } while (!double.TryParse(Console.ReadLine(), out estado) && estado <= 100);
-            empresa.EliminarObraTerminada(estado, obra);
         }
 
         public static void EliminarJefeDeObra()
@@ -208,11 +239,6 @@ namespace Entidades
             Console.WriteLine(empresa.ListarJefesDeObras());
             List<JefeDeObra> jefesDeObras = new List<JefeDeObra>();
             int jefeDeObraSeleccionado;
-            Console.WriteLine("-- Seleccione el jefe de obra a eliminar --");
-            do
-            {
-                Console.Write("Por favor, ingrese un valor numérico y dentro del rango permitido: ");
-            } while (!int.TryParse(Console.ReadLine(), out jefeDeObraSeleccionado) || jefeDeObraSeleccionado <= 0 || jefeDeObraSeleccionado > empresa.ObrasEnProceso.Count);
 
             foreach(Obrero obreroEmpresa in empresa.Obreros)
             {
@@ -221,14 +247,37 @@ namespace Entidades
                     jefesDeObras.Add((JefeDeObra)obreroEmpresa);
                 }
             }
-            JefeDeObra jefeDeObra = jefesDeObras[jefeDeObraSeleccionado];
-            if(empresa.EliminarJefeDeObra(jefeDeObra))
+
+            if(jefesDeObras.Count > 0)
             {
-                Console.WriteLine("Eliminado correctamente el jefe de obra.");
-            }
-            else
-            {
-                Console.WriteLine("No se pudo eliminar el jefe de obra.");
+                Console.WriteLine("-- Seleccione el jefe de obra a eliminar --");
+                do
+                {
+                    Console.Write("Por favor, ingrese un valor numérico y dentro del rango permitido: ");
+                } while (!int.TryParse(Console.ReadLine(), out jefeDeObraSeleccionado) || jefeDeObraSeleccionado <= 0 || jefeDeObraSeleccionado > empresa.ObrasEnProceso.Count);
+
+                JefeDeObra jefeDeObra = jefesDeObras[jefeDeObraSeleccionado - 1];
+
+                foreach (Obrero obreroEmpresa in empresa.Obreros)
+                {
+                    if (obreroEmpresa.NroLegajo == jefeDeObraSeleccionado)
+                    {
+                        empresa.Obreros.Remove(obreroEmpresa);
+                    }
+                }
+
+                if (empresa.EliminarJefeDeObra(jefeDeObra))
+                {
+                    Console.WriteLine("----------------------------------------");
+                    Console.WriteLine("Eliminado correctamente el jefe de obra.");
+                    Console.WriteLine("----------------------------------------");
+                }
+                else
+                {
+                    Console.WriteLine("------------------------------------");
+                    Console.WriteLine("No se pudo eliminar el jefe de obra.");
+                    Console.WriteLine("------------------------------------");
+                }
             }
         }
     }

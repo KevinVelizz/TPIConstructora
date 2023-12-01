@@ -35,6 +35,8 @@ namespace Entidades
             set { cargo = value; }
         }
 
+        
+
         public static bool operator ==(Obrero obrero, Obrero obrero1)
         {
             return obrero.nroLegajo == obrero1.nroLegajo;

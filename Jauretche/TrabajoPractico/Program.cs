@@ -15,6 +15,9 @@ internal class Program
         int opcion;
         do
         {
+            Console.WriteLine("-------------------------------------");
+            Console.WriteLine("Bienvenido a la empresa constructora.");
+            Console.WriteLine("-------------------------------------");
             Console.WriteLine("Menú de opciones:");
             Console.WriteLine("1. Agregar obrero.");
             Console.WriteLine("2. Eliminar obrero.");
@@ -95,3 +98,5 @@ internal class Program
         } while (opcion != 7);
     }
 }
+
+

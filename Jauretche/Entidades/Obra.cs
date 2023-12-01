@@ -55,6 +55,14 @@ namespace Entidades
             get { return this.jefeDeObra; }
         }
 
+        public Empresa Empresa
+        {
+            get => default;
+            set
+            {
+            }
+        }
+
         public bool AsignarJefeDeObra(JefeDeObra jefe)
         {
             bool retorno = false;   

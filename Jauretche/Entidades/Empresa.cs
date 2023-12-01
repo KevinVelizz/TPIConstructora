@@ -1,6 +1,4 @@
-﻿
-using System.Text;
-
+﻿using System.Text;
 namespace Entidades
 {
     public class Empresa
@@ -73,8 +71,16 @@ namespace Entidades
                         {
                             return null;
                         }
-                        else if (grupo.Obreros.Count < 3 && !grupo.Obreros.OfType<JefeDeObra>().Any())
+                        else if (grupo.Obreros.Count < 3)
                         {
+                            if(obrero is JefeDeObra)
+                            {
+                                if(!grupo.Obreros.OfType<JefeDeObra>().Any())
+                                {
+                                    return grupo;
+                                }
+                                continue;
+                            }
                             return grupo;
                         }
                     }
@@ -102,24 +108,60 @@ namespace Entidades
         {
             StringBuilder mensaje = new StringBuilder();
 
-            foreach (Obrero obrero in this.Obreros)
+
+            if(this.obreros.Count > 0)
             {
-                mensaje.AppendLine(obrero.ToString());
+                foreach (Obrero obrero in this.Obreros)
+                {
+                    mensaje.AppendLine(obrero.ToString());
+                }
+            }
+            else
+            {
+                mensaje.AppendLine("-----------------------------");
+                mensaje.AppendLine("No hay obreros en la empresa.");
+                mensaje.AppendLine("-----------------------------");
             }
             return mensaje.ToString();
         }
 
         public string ListarObrasEjecucionAvanceMasMitad()
         {
+
             StringBuilder mensaje = new StringBuilder();
-            mensaje.AppendLine("--Obras en procesos mas del 50%--");
-            foreach(Obra obra in this.ObrasEnProceso)
+            List<Obra> obraMasCincuenta = new List<Obra>();
+            if(this.obrasEnProceso.Count > 0)
             {
-                if(obra.Estado > 50)
+                foreach (Obra obra in this.ObrasEnProceso)
                 {
-                    mensaje.AppendLine(obra.ToString());
+                    if (obra.Estado > 50)
+                    {
+                        obraMasCincuenta.Add(obra);
+                    }
+                }
+                if(obraMasCincuenta.Count > 0)
+                { 
+                    foreach(Obra obra2 in obraMasCincuenta)
+                    {
+                        mensaje.AppendLine("---------------");
+                        mensaje.AppendLine($"{obra2.Estado}");
+                        mensaje.AppendLine("---------------");
+                    }
+                }
+                else
+                {
+                    mensaje.AppendLine("-----------------------------------------");
+                    mensaje.AppendLine("No hay obras en ejecución con mas del 50%");
+                    mensaje.AppendLine("-----------------------------------------");
                 }
             }
+            else
+            {
+                mensaje.AppendLine("---------------------------");
+                mensaje.AppendLine("No hay obras en ejecución.");
+                mensaje.AppendLine("----------------------------");
+            }
+            
             return mensaje.ToString();
         }
 
@@ -131,12 +173,16 @@ namespace Entidades
                 mensaje.AppendLine("-- Obras finalizadas --");
                 foreach (Obra obra in this.ObrasFinalizadas)
                 {
+                    mensaje.AppendLine("----------------");
                     mensaje.AppendLine(obra.ToString());
+                    mensaje.AppendLine("----------------");
                 }
             }
             else
             {
+                mensaje.AppendLine("------------------------");
                 mensaje.AppendLine("No hay obras finalizadas");
+                mensaje.AppendLine("------------------------");
             }
             return mensaje.ToString();
         }
@@ -146,13 +192,29 @@ namespace Entidades
             StringBuilder mensaje = new StringBuilder();
             int contador = 1;
 
+            List<JefeDeObra> jefesDeObra = new List<JefeDeObra>();
+
             foreach(Obrero obrero in this.obreros)
             {
                 if(obrero is JefeDeObra)
                 {
-                    mensaje.Append(contador.ToString() + ": ");
-                    mensaje.AppendLine(obrero.ToString());
+                    jefesDeObra.Add((JefeDeObra)obrero);
                 }
+            }
+            if(jefesDeObra.Count > 0)
+            {
+                foreach (JefeDeObra jefe in jefesDeObra)
+                {
+                    mensaje.Append(contador.ToString() + ": ");
+                    mensaje.AppendLine(jefe.ToString());
+                }
+                
+            }
+            else
+            {
+                mensaje.AppendLine("------------------------------------");
+                mensaje.AppendLine("No hay jefes de obra en la empresa.");
+                mensaje.AppendLine("------------------------------------");
             }
             return mensaje.ToString();
         }
@@ -182,6 +244,17 @@ namespace Entidades
             return false;
         }
 
+       /* public void ImprimirCiudadesMasDe5Recursivo(List<string> ciudades, int indice)
+        {
+            if (indice < ciudades.Count)
+            {
+                if (ciudades[indice].Length > 5)
+                {
+                    Console.WriteLine(ciudades[indice]);
+                }
+                ImprimirCiudadesMasDe5Recursivo(ciudades, indice + 1);
+            }
+        }*/
         public bool EliminarObraTerminada(double estado, Obra obra)
         {
             bool retorno = false;
